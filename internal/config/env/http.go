@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	envHostName = "HTTP_HOST"
-	envPortName = "HTTP_PORT"
+	envHostName = "TODO_HOST"
+	envPortName = "TODO_PORT"
 )
 
 var _ config.HTTPConfig = (*httpConfig)(nil)

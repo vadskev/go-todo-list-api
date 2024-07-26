@@ -28,3 +28,7 @@ type HTTPConfig interface {
 type LogConfig interface {
 	Level() string
 }
+
+type DBConfig interface {
+	Path() string
+}
