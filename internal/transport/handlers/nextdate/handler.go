@@ -27,7 +27,6 @@ func New(ctx context.Context, taskRepository db.Repository) *Handler {
 
 func (h *Handler) HandleGet(w http.ResponseWriter, r *http.Request) {
 	const op = "transport.handlers.nextdate.Handle"
-	logger.Info("asdsdasd")
 	nowParam := r.URL.Query().Get("now")
 	dateParam := r.URL.Query().Get("date")
 	repeatParam := r.URL.Query().Get("repeat")
