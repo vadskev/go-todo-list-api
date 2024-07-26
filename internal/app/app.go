@@ -12,7 +12,12 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/vadskev/go_final_project/internal/config"
 	"github.com/vadskev/go_final_project/internal/lib/logger"
+	"github.com/vadskev/go_final_project/internal/transport/handlers/done"
+	"github.com/vadskev/go_final_project/internal/transport/handlers/nextdate"
+	"github.com/vadskev/go_final_project/internal/transport/handlers/signin"
 	"github.com/vadskev/go_final_project/internal/transport/handlers/task"
+	"github.com/vadskev/go_final_project/internal/transport/handlers/tasks"
+	"github.com/vadskev/go_final_project/internal/transport/middleware/auth"
 	mwLogger "github.com/vadskev/go_final_project/internal/transport/middleware/logger"
 	"go.uber.org/zap"
 )
@@ -27,7 +32,7 @@ const (
 const (
 	ReadTimeout        = 4 * time.Second
 	WriteTimeout       = 4 * time.Second
-	IdleTimeout        = 60 * time.Second
+	IdleTimeout        = 3 * time.Second
 	shutDownCtxTimeout = 1 * time.Second
 )
 
@@ -95,8 +100,30 @@ func (a *App) RunServer(ctx context.Context) error {
 
 	router.Use(mwLogger.New())
 
+	router.Route(taskPath, func(r chi.Router) {
+		r.Use(auth.New(a.configProvider.GetPassFromEnv()))
+		r.Get("/", task.New(ctx, a.configProvider.DBRepository()).HandleGet)
+		r.Post("/", task.New(ctx, a.configProvider.DBRepository()).HandlePost)
+		r.Put("/", task.New(ctx, a.configProvider.DBRepository()).HandlePut)
+		r.Delete("/", task.New(ctx, a.configProvider.DBRepository()).HandleDelete)
+	})
+
 	router.Route(tasksPath, func(r chi.Router) {
-		r.Get("/", task.NewTask())
+		r.Use(auth.New(a.configProvider.GetPassFromEnv()))
+		r.Get("/", tasks.New(ctx, a.configProvider.DBRepository()).Handle)
+	})
+
+	router.Route(nextDatePath, func(r chi.Router) {
+		r.Get("/", nextdate.New(ctx, a.configProvider.DBRepository()).HandleGet)
+	})
+
+	router.Route(taskDonePath, func(r chi.Router) {
+		r.Use(auth.New(a.configProvider.GetPassFromEnv()))
+		r.Post("/", done.New(ctx, a.configProvider.DBRepository()).HandlePost)
+	})
+
+	router.Route(singPath, func(r chi.Router) {
+		r.Post("/", signin.New(ctx, a.configProvider.DBRepository()).HandlePost)
 	})
 
 	a.httpServer = &http.Server{
