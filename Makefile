@@ -11,3 +11,6 @@ coverage:
 
 vettest:
 	go vet ./...
+
+build:
+	go build -o /task_app ./cmd/main.go
