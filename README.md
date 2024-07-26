@@ -79,7 +79,7 @@ go test ./tests
 
 * `GET /api/task{id}`: возвращает задачу
 * `POST /api/task{id}`: добавляет задачу
-* `PUT /api/task`: 
+* `PUT /api/task`: обновляет задачу
 * `DELETE /api/task{id}`: удаляет задачу
 * `GET /api/tasks{search}`: возвращает список ближайших задач, возможна фильтрация с помощью параметра `search`
 * `GET /api/nextdate{now}{date}{repeat}`: вычисляет следующую дату для задачи в соответствии с указанным правилом
