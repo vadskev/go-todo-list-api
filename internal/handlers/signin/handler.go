@@ -2,6 +2,8 @@ package signin
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/go-chi/render"
 	"github.com/pkg/errors"
 	"github.com/vadskev/go-todo-list-api/internal/api"
@@ -9,7 +11,6 @@ import (
 	"github.com/vadskev/go-todo-list-api/internal/logger"
 	"github.com/vadskev/go-todo-list-api/internal/storage/db"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type Handler struct {

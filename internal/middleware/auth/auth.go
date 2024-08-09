@@ -1,8 +1,9 @@
 package auth
 
 import (
-	"github.com/vadskev/go-todo-list-api/internal/config"
 	"net/http"
+
+	"github.com/vadskev/go-todo-list-api/internal/config"
 )
 
 func New(pass config.PasswordConfig) func(next http.Handler) http.Handler {

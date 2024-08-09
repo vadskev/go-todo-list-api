@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
-	"github.com/vadskev/go-todo-list-api/internal/app"
 	"log"
+
+	"github.com/vadskev/go-todo-list-api/internal/app"
 )
 
 func main() {

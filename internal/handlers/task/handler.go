@@ -3,12 +3,13 @@ package task
 import (
 	"context"
 	"encoding/json"
-	"github.com/vadskev/go-todo-list-api/internal/api"
-	"github.com/vadskev/go-todo-list-api/internal/logger"
-	"github.com/vadskev/go-todo-list-api/internal/nextdate"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/vadskev/go-todo-list-api/internal/api"
+	"github.com/vadskev/go-todo-list-api/internal/logger"
+	"github.com/vadskev/go-todo-list-api/internal/nextdate"
 
 	"github.com/go-chi/render"
 	"github.com/pkg/errors"

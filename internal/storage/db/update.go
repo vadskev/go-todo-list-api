@@ -3,6 +3,7 @@ package db
 import (
 	"errors"
 	"fmt"
+
 	"github.com/vadskev/go-todo-list-api/internal/logger"
 
 	sq "github.com/Masterminds/squirrel"

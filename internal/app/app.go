@@ -4,6 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/vadskev/go-todo-list-api/internal/handlers/done"
 	"github.com/vadskev/go-todo-list-api/internal/handlers/nextdate"
 	"github.com/vadskev/go-todo-list-api/internal/handlers/signin"
@@ -12,9 +16,6 @@ import (
 	"github.com/vadskev/go-todo-list-api/internal/logger"
 	"github.com/vadskev/go-todo-list-api/internal/middleware/auth"
 	mwLogger "github.com/vadskev/go-todo-list-api/internal/middleware/logger"
-	"net/http"
-	"os"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/vadskev/go-todo-list-api/internal/config"

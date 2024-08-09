@@ -1,9 +1,10 @@
 package logger
 
 import (
-	"github.com/vadskev/go-todo-list-api/internal/logger"
 	"net/http"
 	"time"
+
+	"github.com/vadskev/go-todo-list-api/internal/logger"
 
 	"github.com/go-chi/chi/v5/middleware"
 	"go.uber.org/zap"
