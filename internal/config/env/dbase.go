@@ -17,8 +17,6 @@ type DBConfig interface {
 	Path() string
 }
 
-/**/
-
 type dbConfig struct {
 	path string
 }

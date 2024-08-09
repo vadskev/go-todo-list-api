@@ -9,7 +9,7 @@ import (
 var configPath string
 
 func init() {
-	flag.StringVar(&configPath, "config-path", ".env", "path to config file; example: -config-path .env")
+	flag.StringVar(&configPath, "config-path", "env/.env", "path to config file; example: -config-path .env")
 	flag.Parse()
 }
 
@@ -31,4 +31,9 @@ type LogConfig interface {
 
 type DBConfig interface {
 	Path() string
+}
+
+type PasswordConfig interface {
+	GetPass() string
+	CreateHash(key string) string
 }

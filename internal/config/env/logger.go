@@ -17,8 +17,6 @@ type LogConfig interface {
 	Level() string
 }
 
-/**/
-
 type logConfig struct {
 	level string
 }

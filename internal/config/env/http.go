@@ -19,8 +19,6 @@ type HTTPConfig interface {
 	Address() string
 }
 
-/**/
-
 type httpConfig struct {
 	host string
 	port string
