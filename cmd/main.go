@@ -2,18 +2,14 @@ package main
 
 import (
 	"context"
-	"log"
-	"os/signal"
-	"syscall"
-
 	"github.com/vadskev/go_final_project/internal/app"
+	"log"
 )
 
 func main() {
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
-	defer stop()
+	ctx := context.Background()
 
-	a, err := app.NewApp()
+	a, err := app.NewApp(ctx)
 	if err != nil {
 		log.Fatalf("Failed to create app: %s", err.Error())
 	}
