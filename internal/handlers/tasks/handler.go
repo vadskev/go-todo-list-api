@@ -2,12 +2,11 @@ package tasks
 
 import (
 	"context"
+	"github.com/vadskev/go_final_project/internal/api"
+	"github.com/vadskev/go_final_project/internal/logger"
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
-	"github.com/vadskev/go_final_project/internal/lib/api"
-	"github.com/vadskev/go_final_project/internal/lib/logger"
 	"github.com/vadskev/go_final_project/internal/models/task"
 	"github.com/vadskev/go_final_project/internal/storage/db"
 	"go.uber.org/zap"
@@ -27,14 +26,15 @@ func New(ctx context.Context, taskRepository db.Repository) *Handler {
 
 func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
 	const op = "transport.tasks.Handle"
-	searchStr := chi.URLParam(r, "search")
+	searchStr := r.URL.Query().Get("search")
+
 	tasks, err := h.taskRepository.GetTasks(searchStr)
 	if err != nil {
 		logger.Error(op, zap.Any("error:", err.Error()))
 		api.ResponseError(w, r, err.Error(), http.StatusInternalServerError)
-		<-h.ctx.Done()
 		return
 	}
+
 	response := struct {
 		Tasks []task.Task `json:"tasks"`
 	}{Tasks: tasks}

@@ -3,15 +3,15 @@ package task
 import (
 	"context"
 	"encoding/json"
+	"github.com/vadskev/go_final_project/internal/api"
+	"github.com/vadskev/go_final_project/internal/logger"
+	"github.com/vadskev/go_final_project/internal/nextdate"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/go-chi/render"
 	"github.com/pkg/errors"
-	"github.com/vadskev/go_final_project/internal/lib/api"
-	"github.com/vadskev/go_final_project/internal/lib/logger"
-	"github.com/vadskev/go_final_project/internal/lib/utils"
 	"github.com/vadskev/go_final_project/internal/models/task"
 	"github.com/vadskev/go_final_project/internal/storage/db"
 	"go.uber.org/zap"
@@ -36,7 +36,6 @@ func (h *Handler) HandleGet(w http.ResponseWriter, r *http.Request) {
 	if id == "" {
 		api.ResponseError(w, r, errors.New("No id task, error ").Error(), http.StatusBadRequest)
 		logger.Error(op, zap.Any("No id task:", "error"))
-		<-h.ctx.Done()
 		return
 	}
 
@@ -44,7 +43,6 @@ func (h *Handler) HandleGet(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		api.ResponseError(w, r, errors.New("No task, error ").Error(), http.StatusNotFound)
 		logger.Error(op, zap.Any("No task:", "error"))
-		<-h.ctx.Done()
 		return
 	}
 
@@ -61,13 +59,11 @@ func (h *Handler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	err := render.DecodeJSON(r.Body, &taskInfo)
 	if err != nil {
 		api.ResponseError(w, r, err.Error(), http.StatusBadRequest)
-		<-h.ctx.Done()
 		return
 	}
 
 	if taskInfo.Title == "" {
 		api.ResponseError(w, r, errors.New("No title").Error(), http.StatusBadRequest)
-		<-h.ctx.Done()
 		return
 	}
 
@@ -81,7 +77,6 @@ func (h *Handler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		api.ResponseError(w, r, errors.New("No valid date format").Error(), http.StatusBadRequest)
 		logger.Error(op, zap.Any("No valid date format, error:", err.Error()))
-		<-h.ctx.Done()
 		return
 	}
 
@@ -89,11 +84,10 @@ func (h *Handler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		if taskInfo.Repeat == "" {
 			taskInfo.Date = now.Format("20060102")
 		} else {
-			taskInfo.Date, err = utils.NextDate(now, taskInfo.Date, taskInfo.Repeat)
+			taskInfo.Date, err = nextdate.NextDate(now, taskInfo.Date, taskInfo.Repeat)
 			if err != nil {
 				api.ResponseError(w, r, errors.New("No correct repeat format").Error(), http.StatusBadRequest)
 				logger.Error(op, zap.Any("No correct repeat format, error:", err.Error()))
-				<-h.ctx.Done()
 				return
 			}
 		}
@@ -104,7 +98,6 @@ func (h *Handler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		api.ResponseError(w, r, errors.New("Error creating task: ").Error()+err.Error(), http.StatusBadRequest)
 		logger.Error(op, zap.Any("Error creating task, error:", err.Error()))
-		<-h.ctx.Done()
 		return
 	}
 	api.ResponseOK(w, r, response)
@@ -119,14 +112,12 @@ func (h *Handler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		api.ResponseError(w, r, errors.New("Deserialize json").Error(), http.StatusBadRequest)
 		logger.Error(op, zap.Any("Deserialize json, error:", err.Error()))
-		<-h.ctx.Done()
 		return
 	}
 
 	if newTask.ID == "" {
 		api.ResponseError(w, r, errors.New("No task id").Error(), http.StatusBadRequest)
 		logger.Error(op, zap.Any("No task id, error:", errors.New("No task id").Error()))
-		<-h.ctx.Done()
 		return
 	}
 
@@ -134,14 +125,12 @@ func (h *Handler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		api.ResponseError(w, r, errors.New("ID not number").Error(), http.StatusBadRequest)
 		logger.Error(op, zap.Any("ID not number, error:", err.Error()))
-		<-h.ctx.Done()
 		return
 	}
 
 	if newTask.Title == "" {
 		api.ResponseError(w, r, errors.New("Title empty").Error(), http.StatusBadRequest)
-		logger.Error(op, zap.Any("Title empty, error:", err.Error()))
-		<-h.ctx.Done()
+		logger.Error(op, zap.Any("Title empty, error:", errors.New("Title empty").Error()))
 		return
 	}
 
@@ -155,7 +144,6 @@ func (h *Handler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		api.ResponseError(w, r, errors.New("No valid date format").Error(), http.StatusBadRequest)
 		logger.Error(op, zap.Any("No valid date format, error:", err.Error()))
-		<-h.ctx.Done()
 		return
 	}
 
@@ -163,11 +151,10 @@ func (h *Handler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		if newTask.Repeat == "" {
 			newTask.Date = now.Format("20060102")
 		} else {
-			newTask.Date, err = utils.NextDate(now, newTask.Date, newTask.Repeat)
+			newTask.Date, err = nextdate.NextDate(now, newTask.Date, newTask.Repeat)
 			if err != nil {
 				api.ResponseError(w, r, errors.New("No correct repeat format").Error(), http.StatusBadRequest)
 				logger.Error(op, zap.Any("No correct repeat format, error:", err.Error()))
-				<-h.ctx.Done()
 				return
 			}
 		}
@@ -177,7 +164,6 @@ func (h *Handler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		api.ResponseError(w, r, errors.New("Error update Task").Error(), http.StatusInternalServerError)
 		logger.Error(op, zap.Any("Error update Task, error:", err.Error()))
-		<-h.ctx.Done()
 		return
 	}
 
@@ -191,7 +177,6 @@ func (h *Handler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 	if id == "" {
 		api.ResponseError(w, r, errors.New("No id task, error ").Error(), http.StatusBadRequest)
 		logger.Error(op, zap.Any("No id task:", "error"))
-		<-h.ctx.Done()
 		return
 	}
 
@@ -199,7 +184,6 @@ func (h *Handler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		api.ResponseError(w, r, errors.New("Error delete task, error ").Error(), http.StatusNotFound)
 		logger.Error(op, zap.Any("Error delete task:", "error"))
-		<-h.ctx.Done()
 		return
 	}
 

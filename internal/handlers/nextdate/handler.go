@@ -2,13 +2,13 @@ package nextdate
 
 import (
 	"context"
+	"github.com/vadskev/go_final_project/internal/api"
+	"github.com/vadskev/go_final_project/internal/logger"
+	"github.com/vadskev/go_final_project/internal/nextdate"
 	"net/http"
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/vadskev/go_final_project/internal/lib/api"
-	"github.com/vadskev/go_final_project/internal/lib/logger"
-	"github.com/vadskev/go_final_project/internal/lib/utils"
 	"github.com/vadskev/go_final_project/internal/storage/db"
 	"go.uber.org/zap"
 )
@@ -35,15 +35,13 @@ func (h *Handler) HandleGet(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		api.ResponseError(w, r, errors.New("Vrong NOW param").Error(), http.StatusBadRequest)
 		logger.Error(op, zap.Any("Vrong NOW param, error:", errors.New("No taskItem id").Error()))
-		<-h.ctx.Done()
 		return
 	}
 
-	nextDate, err := utils.NextDate(now, dateParam, repeatParam)
+	nextDate, err := nextdate.NextDate(now, dateParam, repeatParam)
 	if err != nil {
 		api.ResponseError(w, r, errors.New("No find next date").Error(), http.StatusInternalServerError)
 		logger.Error(op, zap.Any("No find next date, error:", errors.New("No taskItem id").Error()))
-		<-h.ctx.Done()
 		return
 	}
 
