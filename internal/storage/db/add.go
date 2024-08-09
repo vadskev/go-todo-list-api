@@ -2,13 +2,12 @@ package db
 
 import (
 	sq "github.com/Masterminds/squirrel"
-	"github.com/vadskev/go_final_project/internal/lib/logger"
+	"github.com/vadskev/go_final_project/internal/logger"
 	"github.com/vadskev/go_final_project/internal/models/task"
 	"go.uber.org/zap"
 )
 
 func (r *Repository) Create(task *task.Info) (int64, error) {
-	const op = "storage.db.Create"
 	builderInsert := sq.Insert(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Columns(colDate, colTitle, colComment, colRepeat).
@@ -17,13 +16,13 @@ func (r *Repository) Create(task *task.Info) (int64, error) {
 
 	query, args, err := builderInsert.ToSql()
 	if err != nil {
-		logger.Error(op, zap.Any("error:", err.Error()))
+		logger.Error("storage.db.Create", zap.Any("error:", err.Error()))
 		return 0, err
 	}
 
 	stmt, err := r.DB().Prepare(query)
 	if err != nil {
-		logger.Error(op, zap.Any("error:", err.Error()))
+		logger.Error("storage.db.Create", zap.Any("error:", err.Error()))
 		return 0, err
 	}
 
@@ -31,13 +30,13 @@ func (r *Repository) Create(task *task.Info) (int64, error) {
 
 	res, err := stmt.Exec(args...)
 	if err != nil {
-		logger.Error(op, zap.Any("error:", err.Error()))
+		logger.Error("storage.db.Create", zap.Any("error:", err.Error()))
 		return 0, err
 	}
 
 	id, err := res.LastInsertId()
 	if err != nil {
-		logger.Error(op, zap.Any("error:", err.Error()))
+		logger.Error("storage.db.Create", zap.Any("error:", err.Error()))
 		return 0, err
 	}
 	return id, nil

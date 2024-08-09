@@ -2,10 +2,10 @@ package db
 
 import (
 	"database/sql"
+	"github.com/vadskev/go_final_project/internal/logger"
 	"os"
 
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/vadskev/go_final_project/internal/lib/logger"
 	"github.com/vadskev/go_final_project/internal/storage"
 	"go.uber.org/zap"
 )
@@ -24,40 +24,37 @@ type Repository struct {
 
 var _ storage.TaskRepository = (*Repository)(nil)
 
-/**/
-
 func NewRepository(filepath string) (Repository, error) {
-	const op = "storage.db.storage.NewRepository"
 	_, err := os.Stat(filepath)
 	if os.IsNotExist(err) {
 		db, err := sql.Open("sqlite3", filepath)
 		if err != nil {
-			logger.Error(op, zap.Any("error:", err.Error()))
+			logger.Error("storage.db.storage.NewRepository", zap.Any("error:", err.Error()))
 		}
 
-		_, err = db.Exec(` CREATE TABLE scheduler (
+		_, err = db.Exec(`CREATE TABLE IF NOT EXISTS scheduler (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            date TEXT,
-            title TEXT,
-            comment TEXT,
-            repeat TEXT
+            date TEXT NOT NULL,
+            title TEXT NOT NULL CHECK(LENGTH(title) <= 255),
+            comment TEXT CHECK(LENGTH(comment) <= 1024),
+            repeat TEXT CHECK(LENGTH(repeat) <= 255)
         );
         CREATE INDEX idx_scheduler_date ON scheduler(date);`)
 		if err != nil {
-			logger.Error(op, zap.Any("error:", err.Error()))
+			logger.Error("storage.db.storage.NewRepository", zap.Any("error:", err.Error()))
 			return Repository{}, err
 		}
 
 		return Repository{db: db}, nil
 
 	} else if err != nil {
-		logger.Error(op, zap.Any("error:", err.Error()))
+		logger.Error("storage.db.storage.NewRepository", zap.Any("error:", err.Error()))
 		return Repository{}, err
 	}
 
 	db, err := sql.Open("sqlite3", filepath)
 	if err != nil {
-		logger.Error(op, zap.Any("error:", err.Error()))
+		logger.Error("storage.db.storage.NewRepository", zap.Any("error:", err.Error()))
 	}
 
 	return Repository{

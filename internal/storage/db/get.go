@@ -1,16 +1,15 @@
 package db
 
 import (
+	"github.com/vadskev/go_final_project/internal/logger"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/vadskev/go_final_project/internal/lib/logger"
 	"github.com/vadskev/go_final_project/internal/models/task"
 	"go.uber.org/zap"
 )
 
 func (r *Repository) GetTasks(searchStr string) ([]task.Task, error) {
-	const op = "storage.db.GetTasks"
 	builderGet := sq.
 		Select("*").
 		From(tableName)
@@ -32,23 +31,23 @@ func (r *Repository) GetTasks(searchStr string) ([]task.Task, error) {
 
 	query, args, err := builderGet.ToSql()
 	if err != nil {
-		logger.Error(op, zap.Any("error:", err.Error()))
+		logger.Error("storage.db.GetTasks", zap.Any("error:", err.Error()))
 		return nil, err
 	}
 
 	rows, err := r.DB().Query(query, args...)
 	if err != nil {
-		logger.Error(op, zap.Any("error:", err.Error()))
+		logger.Error("storage.db.GetTasks", zap.Any("error:", err.Error()))
 		return nil, err
 	}
 	defer rows.Close()
 
-	var tasks []task.Task
+	tasks := make([]task.Task, 0, 1)
 	for rows.Next() {
 		var t task.Task
 		err = rows.Scan(&t.ID, &t.Date, &t.Title, &t.Comment, &t.Repeat)
 		if err != nil {
-			logger.Error(op, zap.Any("error:", err.Error()))
+			logger.Error("storage.db.GetTasks", zap.Any("error:", err.Error()))
 			return nil, err
 		}
 
@@ -56,15 +55,13 @@ func (r *Repository) GetTasks(searchStr string) ([]task.Task, error) {
 	}
 
 	if err = rows.Err(); err != nil {
-		logger.Error(op, zap.Any("error:", err.Error()))
+		logger.Error("storage.db.GetTasks", zap.Any("error:", err.Error()))
 		return nil, err
 	}
-
 	return tasks, nil
 }
 
 func (r *Repository) GetById(id string) (*task.Task, error) {
-	const op = "storage.db.GetById"
 	query := sq.
 		Select("*").
 		From(tableName).
@@ -73,7 +70,7 @@ func (r *Repository) GetById(id string) (*task.Task, error) {
 
 	sql, args, err := query.ToSql()
 	if err != nil {
-		logger.Error(op, zap.Any("error:", err.Error()))
+		logger.Error("storage.db.GetById", zap.Any("error:", err.Error()))
 		return nil, err
 	}
 
@@ -82,7 +79,7 @@ func (r *Repository) GetById(id string) (*task.Task, error) {
 	var t task.Task
 	err = row.Scan(&t.ID, &t.Date, &t.Title, &t.Comment, &t.Repeat)
 	if err != nil {
-		logger.Error(op, zap.Any("error:", err.Error()))
+		logger.Error("storage.db.GetById", zap.Any("error:", err.Error()))
 		return nil, err
 	}
 	return &t, nil
