@@ -8,19 +8,19 @@ import (
 	"github.com/vadskev/go_final_project/internal/storage/db"
 )
 
-type configProvider struct {
+type serviceProvider struct {
 	logConfig  config.LogConfig
 	httpConfig config.HTTPConfig
 	dbConfig   config.DBConfig
+	pass       config.PasswordConfig
 	repository db.Repository
-	password   string
 }
 
-func newConfigProvider() *configProvider {
-	return &configProvider{}
+func newServiceProvider() *serviceProvider {
+	return &serviceProvider{}
 }
 
-func (s *configProvider) LogConfig() config.LogConfig {
+func (s *serviceProvider) LogConfig() config.LogConfig {
 	if s.logConfig == nil {
 		cfg, err := env.NewLogConfig()
 		if err != nil {
@@ -31,7 +31,7 @@ func (s *configProvider) LogConfig() config.LogConfig {
 	return s.logConfig
 }
 
-func (s *configProvider) HTTPConfig() config.HTTPConfig {
+func (s *serviceProvider) HTTPConfig() config.HTTPConfig {
 	if s.httpConfig == nil {
 		cfg, err := env.NewHTTPConfig()
 		if err != nil {
@@ -44,7 +44,7 @@ func (s *configProvider) HTTPConfig() config.HTTPConfig {
 	return s.httpConfig
 }
 
-func (s *configProvider) DBConfig() config.DBConfig {
+func (s *serviceProvider) DBConfig() config.DBConfig {
 	if s.dbConfig == nil {
 		cfg, err := env.NewDBConfig()
 		if err != nil {
@@ -55,7 +55,7 @@ func (s *configProvider) DBConfig() config.DBConfig {
 	return s.dbConfig
 }
 
-func (s *configProvider) DBRepository() db.Repository {
+func (s *serviceProvider) DBRepository() db.Repository {
 	if s.repository.DB() == nil {
 		sqliteDb, err := db.NewRepository(s.DBConfig().Path())
 		if err != nil {
@@ -71,13 +71,13 @@ func (s *configProvider) DBRepository() db.Repository {
 	return s.repository
 }
 
-func (s *configProvider) GetPassFromEnv() string {
-	if len(s.password) == 0 {
+func (s *serviceProvider) PassConfig() config.PasswordConfig {
+	if s.pass == nil {
 		cfg, err := env.NewPassConfig()
 		if err != nil {
 			log.Fatalf("failed to get password: %s", err.Error())
 		}
-		s.password = cfg.GetPass()
+		s.pass = cfg
 	}
-	return s.password
+	return s.pass
 }

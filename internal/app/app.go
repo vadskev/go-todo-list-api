@@ -4,21 +4,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
+	"github.com/vadskev/go_final_project/internal/handlers/done"
+	"github.com/vadskev/go_final_project/internal/handlers/nextdate"
+	"github.com/vadskev/go_final_project/internal/handlers/signin"
+	"github.com/vadskev/go_final_project/internal/handlers/task"
+	"github.com/vadskev/go_final_project/internal/handlers/tasks"
+	"github.com/vadskev/go_final_project/internal/logger"
+	"github.com/vadskev/go_final_project/internal/middleware/auth"
+	mwLogger "github.com/vadskev/go_final_project/internal/middleware/logger"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/vadskev/go_final_project/internal/config"
-	"github.com/vadskev/go_final_project/internal/lib/logger"
-	"github.com/vadskev/go_final_project/internal/transport/handlers/done"
-	"github.com/vadskev/go_final_project/internal/transport/handlers/nextdate"
-	"github.com/vadskev/go_final_project/internal/transport/handlers/signin"
-	"github.com/vadskev/go_final_project/internal/transport/handlers/task"
-	"github.com/vadskev/go_final_project/internal/transport/handlers/tasks"
-	"github.com/vadskev/go_final_project/internal/transport/middleware/auth"
-	mwLogger "github.com/vadskev/go_final_project/internal/transport/middleware/logger"
 	"go.uber.org/zap"
 )
 
@@ -37,14 +36,14 @@ const (
 )
 
 type App struct {
-	configProvider *configProvider
-	httpServer     *http.Server
+	serviceProvider *serviceProvider
+	httpServer      *http.Server
 }
 
-func NewApp() (*App, error) {
+func NewApp(ctx context.Context) (*App, error) {
 	app := &App{}
 
-	err := app.loadDeps()
+	err := app.loadDeps(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -52,29 +51,22 @@ func NewApp() (*App, error) {
 	return app, nil
 }
 
-func (a *App) loadDeps() error {
-	err := a.loadConfig()
-	if err != nil {
-		return err
+func (a *App) loadDeps(ctx context.Context) error {
+	inits := []func(context.Context) error{
+		a.loadConfig,
+		a.loadServiceProvider,
+		a.loadLogger,
 	}
-	log.Println("Config loaded")
-
-	err = a.loadConfigProvider()
-	if err != nil {
-		return err
+	for _, f := range inits {
+		err := f(ctx)
+		if err != nil {
+			return err
+		}
 	}
-	log.Println("Config provider loaded")
-
-	err = a.loadLogger()
-	if err != nil {
-		return err
-	}
-	logger.Info("Logger loaded")
-
 	return nil
 }
 
-func (a *App) loadConfig() error {
+func (a *App) loadConfig(_ context.Context) error {
 	err := config.Load()
 	if err != nil {
 		return err
@@ -82,13 +74,13 @@ func (a *App) loadConfig() error {
 	return nil
 }
 
-func (a *App) loadConfigProvider() error {
-	a.configProvider = newConfigProvider()
+func (a *App) loadServiceProvider(_ context.Context) error {
+	a.serviceProvider = newServiceProvider()
 	return nil
 }
 
-func (a *App) loadLogger() error {
-	err := logger.Init(a.configProvider.LogConfig().Level())
+func (a *App) loadLogger(_ context.Context) error {
+	err := logger.Init(a.serviceProvider.LogConfig().Level())
 	if err != nil {
 		return err
 	}
@@ -101,33 +93,33 @@ func (a *App) RunServer(ctx context.Context) error {
 	router.Use(mwLogger.New())
 
 	router.Route(taskPath, func(r chi.Router) {
-		r.Use(auth.New(a.configProvider.GetPassFromEnv()))
-		r.Get("/", task.New(ctx, a.configProvider.DBRepository()).HandleGet)
-		r.Post("/", task.New(ctx, a.configProvider.DBRepository()).HandlePost)
-		r.Put("/", task.New(ctx, a.configProvider.DBRepository()).HandlePut)
-		r.Delete("/", task.New(ctx, a.configProvider.DBRepository()).HandleDelete)
+		r.Use(auth.New(a.serviceProvider.PassConfig()))
+		r.Get("/", task.New(ctx, a.serviceProvider.DBRepository()).HandleGet)
+		r.Post("/", task.New(ctx, a.serviceProvider.DBRepository()).HandlePost)
+		r.Put("/", task.New(ctx, a.serviceProvider.DBRepository()).HandlePut)
+		r.Delete("/", task.New(ctx, a.serviceProvider.DBRepository()).HandleDelete)
 	})
 
 	router.Route(tasksPath, func(r chi.Router) {
-		r.Use(auth.New(a.configProvider.GetPassFromEnv()))
-		r.Get("/", tasks.New(ctx, a.configProvider.DBRepository()).Handle)
+		r.Use(auth.New(a.serviceProvider.PassConfig()))
+		r.Get("/", tasks.New(ctx, a.serviceProvider.DBRepository()).Handle)
 	})
 
 	router.Route(nextDatePath, func(r chi.Router) {
-		r.Get("/", nextdate.New(ctx, a.configProvider.DBRepository()).HandleGet)
+		r.Get("/", nextdate.New(ctx, a.serviceProvider.DBRepository()).HandleGet)
 	})
 
 	router.Route(taskDonePath, func(r chi.Router) {
-		r.Use(auth.New(a.configProvider.GetPassFromEnv()))
-		r.Post("/", done.New(ctx, a.configProvider.DBRepository()).HandlePost)
+		r.Use(auth.New(a.serviceProvider.PassConfig()))
+		r.Post("/", done.New(ctx, a.serviceProvider.DBRepository()).HandlePost)
 	})
 
 	router.Route(singPath, func(r chi.Router) {
-		r.Post("/", signin.New(ctx, a.configProvider.DBRepository()).HandlePost)
+		r.Post("/", signin.New(ctx, a.serviceProvider.DBRepository(), a.serviceProvider.PassConfig()).HandlePost)
 	})
 
 	a.httpServer = &http.Server{
-		Addr:         a.configProvider.HTTPConfig().Address(),
+		Addr:         a.serviceProvider.HTTPConfig().Address(),
 		Handler:      router,
 		ReadTimeout:  ReadTimeout,
 		WriteTimeout: WriteTimeout,
