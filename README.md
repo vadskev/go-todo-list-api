@@ -44,7 +44,7 @@ git clone https://github.com/vadskev/go_final_project.git
 cd go_final_project
 
 # создаем конфигурацию .env:
-$ nano .env {
+$ nano env/.env {
 LOG_LEVEL=info
 TODO_HOST=localhost
 TODO_PORT=7540
@@ -60,16 +60,19 @@ go run ./cmd
 ```
 
 ```shell
-## Запуск TODO-проекта в Docker
-docker build -t task_app .
-docker run -p 7540:7540 task_app
+## Создание Docker-образа
+img-build:
+	docker build -t task_app .
+	
+## Запуск контейнера
+img-run:
+	docker run --env-file ./env/.env -d -p ${TODO_PORT}:${TODO_PORT} --name task-app-api task_app
+
+## Остановка контейнера
+img-stop:
+	docker stop task-app-api
 ```
 
-```shell
-## Запуск TODO-проекта с помощью Docker Compose 
-cd go_final_project/
-docker compose up --build
-```
 ```shell
 ## Запуск тестов
 go test ./tests
@@ -90,24 +93,25 @@ go test ./tests
 ```
 go_final_project/
 ├── cmd/                  стартавая точка работы проекта
+├── env/                  переменные окружения, пример .env файла
 ├── internal/             приватная директория приложения, библиотеки
+│   ├── api/              Responce ответы
 │   ├── app/              сборка приложения
 │   └── config/           конфигурация приложения
 │       └── env/          сбор переменных окружения
-│   ├── lib/              функции для ответов, логирования, генерации JWT токена
+│   ├── handlers/         обработчики HTTP запросов
+│   ├── logger/           создание logger
+│   └── middleware/       middlewares
+│       ├── auth/         middleware для проверки авторизации
+│       └── logger/       middleware логирования запросов
 │   ├── models/           слой моделей
+│   ├── nextdate/         функция для работы с датой
 │   ├── storage/          слой для работы с SQLite базой
-│   └── transport/        транспортный слой
-│       ├── handlers/     обработчики HTTP запросов
-│       └── middleware/   middlewares
-│           ├── auth/     middleware для проверки авторизации
-│           └── logger/   middleware логирования запросов
 ├── tests/                тесты для проверки API
-├── web/                  содержит файлы фронтенда
-└── .env                  переменные окружения, пример .env файла
+└── web/                  содержит файлы фронтенда
 ```
 
-Каталоги первого уровня `cmd`, `internal`, `lib` обычно встречаются в других популярных проектах Go, как описано 
+Каталоги первого уровня `cmd`, `internal` обычно встречаются в других популярных проектах Go, как описано 
 в разделе [Standard Go Project Layout](https://github.com/golang-standards/project-layout).
 
 Пакет `internal` структурирован в соответствии с [screaming architecture](https://blog.cleancoder.com/uncle-bob/2011/09/30/Screaming-Architecture.html). 
@@ -127,5 +131,5 @@ go_final_project/
 
 Конфигурация приложения представлена в директории `internal/config/*`.
 
-При запуске приложение загружает конфигурацию из переменных окружения. Путь к переменным окружения должен быть расположен в корне проекта `.env`.
+При запуске приложение загружает конфигурацию из переменных окружения. Путь к переменным окружения должен быть расположен в по адресу `./env/.env`.
 
