@@ -40,8 +40,8 @@
 ```shell
 ## Запуск TODO-проекта
 # скачиваем репозиторий
-git clone https://github.com/vadskev/go_final_project.git
-cd go_final_project
+git clone https://github.com/vadskev/go-todo-list-api.git
+cd go-todo-list-api
 
 # создаем конфигурацию .env:
 $ nano env/.env {
@@ -91,7 +91,7 @@ go test ./tests
 
 ## Проект имеет следующую структуру:
 ```
-go_final_project/
+go-todo-list-api/
 ├── cmd/                  стартавая точка работы проекта
 ├── env/                  переменные окружения, пример .env файла
 ├── internal/             приватная директория приложения, библиотеки

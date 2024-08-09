@@ -1,4 +1,4 @@
-module github.com/vadskev/go_final_project
+module github.com/vadskev/go-todo-list-api
 
 go 1.22.4
 

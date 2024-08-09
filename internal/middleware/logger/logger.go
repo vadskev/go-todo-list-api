@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"github.com/vadskev/go_final_project/internal/logger"
+	"github.com/vadskev/go-todo-list-api/internal/logger"
 	"net/http"
 	"time"
 

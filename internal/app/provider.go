@@ -3,9 +3,9 @@ package app
 import (
 	"log"
 
-	"github.com/vadskev/go_final_project/internal/config"
-	"github.com/vadskev/go_final_project/internal/config/env"
-	"github.com/vadskev/go_final_project/internal/storage/db"
+	"github.com/vadskev/go-todo-list-api/internal/config"
+	"github.com/vadskev/go-todo-list-api/internal/config/env"
+	"github.com/vadskev/go-todo-list-api/internal/storage/db"
 )
 
 type serviceProvider struct {

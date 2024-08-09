@@ -2,14 +2,14 @@ package nextdate
 
 import (
 	"context"
-	"github.com/vadskev/go_final_project/internal/api"
-	"github.com/vadskev/go_final_project/internal/logger"
-	"github.com/vadskev/go_final_project/internal/nextdate"
+	"github.com/vadskev/go-todo-list-api/internal/api"
+	"github.com/vadskev/go-todo-list-api/internal/logger"
+	"github.com/vadskev/go-todo-list-api/internal/nextdate"
 	"net/http"
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/vadskev/go_final_project/internal/storage/db"
+	"github.com/vadskev/go-todo-list-api/internal/storage/db"
 	"go.uber.org/zap"
 )
 

@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"github.com/vadskev/go_final_project/internal/config"
+	"github.com/vadskev/go-todo-list-api/internal/config"
 	"net/http"
 )
 

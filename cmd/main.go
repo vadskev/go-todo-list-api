@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"github.com/vadskev/go_final_project/internal/app"
+	"github.com/vadskev/go-todo-list-api/internal/app"
 	"log"
 )
 

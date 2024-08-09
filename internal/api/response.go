@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/render"
-	"github.com/vadskev/go_final_project/internal/models/task"
+	"github.com/vadskev/go-todo-list-api/internal/models/task"
 )
 
 type Response struct {

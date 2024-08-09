@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-	"github.com/vadskev/go_final_project/internal/logger"
+	"github.com/vadskev/go-todo-list-api/internal/logger"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/pkg/errors"

@@ -5,7 +5,7 @@ import (
 	"net"
 	"os"
 
-	"github.com/vadskev/go_final_project/internal/config"
+	"github.com/vadskev/go-todo-list-api/internal/config"
 )
 
 const (

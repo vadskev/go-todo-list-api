@@ -2,13 +2,13 @@ package tasks
 
 import (
 	"context"
-	"github.com/vadskev/go_final_project/internal/api"
-	"github.com/vadskev/go_final_project/internal/logger"
+	"github.com/vadskev/go-todo-list-api/internal/api"
+	"github.com/vadskev/go-todo-list-api/internal/logger"
 	"net/http"
 
 	"github.com/go-chi/render"
-	"github.com/vadskev/go_final_project/internal/models/task"
-	"github.com/vadskev/go_final_project/internal/storage/db"
+	"github.com/vadskev/go-todo-list-api/internal/models/task"
+	"github.com/vadskev/go-todo-list-api/internal/storage/db"
 	"go.uber.org/zap"
 )
 

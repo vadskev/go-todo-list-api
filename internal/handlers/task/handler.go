@@ -3,17 +3,17 @@ package task
 import (
 	"context"
 	"encoding/json"
-	"github.com/vadskev/go_final_project/internal/api"
-	"github.com/vadskev/go_final_project/internal/logger"
-	"github.com/vadskev/go_final_project/internal/nextdate"
+	"github.com/vadskev/go-todo-list-api/internal/api"
+	"github.com/vadskev/go-todo-list-api/internal/logger"
+	"github.com/vadskev/go-todo-list-api/internal/nextdate"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/go-chi/render"
 	"github.com/pkg/errors"
-	"github.com/vadskev/go_final_project/internal/models/task"
-	"github.com/vadskev/go_final_project/internal/storage/db"
+	"github.com/vadskev/go-todo-list-api/internal/models/task"
+	"github.com/vadskev/go-todo-list-api/internal/storage/db"
 	"go.uber.org/zap"
 )
 

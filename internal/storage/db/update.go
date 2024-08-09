@@ -3,10 +3,10 @@ package db
 import (
 	"errors"
 	"fmt"
-	"github.com/vadskev/go_final_project/internal/logger"
+	"github.com/vadskev/go-todo-list-api/internal/logger"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/vadskev/go_final_project/internal/models/task"
+	"github.com/vadskev/go-todo-list-api/internal/models/task"
 	"go.uber.org/zap"
 )
 

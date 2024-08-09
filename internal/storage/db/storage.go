@@ -2,11 +2,11 @@ package db
 
 import (
 	"database/sql"
-	"github.com/vadskev/go_final_project/internal/logger"
+	"github.com/vadskev/go-todo-list-api/internal/logger"
 	"os"
 
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/vadskev/go_final_project/internal/storage"
+	"github.com/vadskev/go-todo-list-api/internal/storage"
 	"go.uber.org/zap"
 )
 
