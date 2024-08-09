@@ -16,8 +16,7 @@ func ResponseError(w http.ResponseWriter, r *http.Request, error string, status 
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(status)
 	render.JSON(w, r, Response{
-		Status: status,
-		Error:  error,
+		Error: error,
 	})
 }
 func ResponseOK(w http.ResponseWriter, r *http.Request, response task.Response) {
