@@ -43,3 +43,7 @@ func Info(msg string, fields ...zap.Field) {
 func Error(msg string, fields ...zap.Field) {
 	globalLogger.Error(msg, fields...)
 }
+
+func Debug(msg string, fields ...zap.Field) {
+	globalLogger.Debug(msg, fields...)
+}
