@@ -1,22 +1,13 @@
-FROM golang:1.22.4-alpine3.20 AS builder
+FROM golang:1.22.4
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
+COPY . .
 
 RUN go mod download
 
-COPY . .
+EXPOSE ${TODO_PORT}
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /task_app ./cmd/main.go
-#RUN go build -o /task_app
+RUN go build -o bin/task_app ./cmd/main.go
 
-EXPOSE 7540
-
-ENV LOG_LEVEL=info
-ENV TODO_HOST=0.0.0.0
-ENV TODO_PORT=7540
-ENV TODO_DBFILE=./scheduler.db
-ENV TODO_PASSWORD=secret_pass
-
-CMD ["/task_app"]
+CMD ["./bin/task_app"]
